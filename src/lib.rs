@@ -1,7 +1,7 @@
 extern crate winapi;
 extern crate user32;
 
-use winapi::{MSLLHOOKSTRUCT, MOUSEINPUT, POINT, HWND, MSG, INPUT, KEYBDINPUT, c_int, WPARAM, LPARAM, LRESULT, HINSTANCE, HHOOK, KBDLLHOOKSTRUCT};
+use winapi::{MSLLHOOKSTRUCT, MOUSEINPUT, HWND, MSG, INPUT, KEYBDINPUT, c_int, WPARAM, LPARAM, LRESULT, HINSTANCE, HHOOK, KBDLLHOOKSTRUCT};
 use user32::{GetAsyncKeyState, UnhookWindowsHookEx, PostMessageA, GetMessageW, GetKeyState, MapVirtualKeyA, SendInput, SetWindowsHookExA, CallNextHookEx};
 use std::mem::{transmute, size_of, uninitialized};
 use Input::{MousePressMiddle, MouseReleaseMiddle, KeybdPress, KeybdRelease, MousePressLeft, MouseReleaseLeft, MousePressRight, MouseReleaseRight, MouseMove, MouseWheel};
@@ -80,10 +80,12 @@ pub fn send_input(input: Input) {
 ///
 /// #Example
 /// ```
-/// while let Some(input) = ::intercept_input() {
+/// use rusty_hotkey::intercept_input;
+/// use rusty_hotkey::Input::KeybdRelease; 
+/// while let Some(input) = intercept_input() {
 ///  match input {
 ///   //Exit if NumLock gets pressed
-///   ::KeybdRelease(144) => break,
+///   KeybdRelease(144) => break,
 ///   //Log all inputs
 ///   _ => println!("{:?}", input)
 ///  }
@@ -96,7 +98,7 @@ pub fn intercept_input() -> Option<Input> {
     if unsafe {GetMessageW(&mut msg, 0 as HWND, 0, 0)} <= 0 {return None}
     unsafe{UnhookWindowsHookEx(KEYBD_HHOOK)};
     unsafe{UnhookWindowsHookEx(MOUSE_HHOOK)};
-    //Code can be found here: https://wiki.winehq.org/List_Of_Windows_Messages
+    // Code can be found here: https://wiki.winehq.org/List_Of_Windows_Messages
     match msg.wParam {
         256 => Some(Input::KeybdPress(unsafe{*(msg.lParam as *const KBDLLHOOKSTRUCT)}.vkCode as u8)),
         257 => Some(Input::KeybdRelease(unsafe{*(msg.lParam as *const KBDLLHOOKSTRUCT)}.vkCode as u8)),
@@ -123,7 +125,7 @@ pub fn get_toggle_state(vk_code: VirtualKeyCode) -> bool {
     unsafe {GetKeyState(vk_code as i32) & 15 != 0}
 }
 
-///Returns whether a key is being physically pressed down
+/// Returns whether a key is being physically pressed down
 pub fn get_async_state(vk_code: VirtualKeyCode) -> bool {
     unsafe {GetAsyncKeyState(vk_code as i32) & 15 != 0}
 }

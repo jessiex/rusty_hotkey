@@ -2,6 +2,14 @@
 name = "rusty_hotkey"
 version = "0.1.0"
 authors = ["obv-mikhail <obv.mikhail@gmail.com>"]
+description = "A library for creating global hotkeys, as well as emulating mouse and keyboard input."
+documentation = "https://docs.rs/rusty_hotkey"
+homepage = "https://github.com/obv-mikhail/rusty_hotkey"
+repository = "https://github.com/obv-mikhail/rusty_hotkey"
+readme = "README.md"
+keywords = ["hotkey", "mouse", "keyboard", "input"]
+categories = ["api-bindings", "..."]
+license = "MIT"
 
 [dependencies]
 winapi = "0.2.8"
